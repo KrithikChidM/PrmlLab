@@ -54,14 +54,14 @@ k_values = [180, 190, 200, 210, 220, 230, 240, 250, 260]
 results = []
 for requested_k in k_values:
     k = requested_k
-    '''if k < len(eigenvalues):
+    if k < len(eigenvalues):
         current = eigenvalues[k - 1]
         if np.abs(current.imag) > 1e-10:
             if np.abs(
                 eigenvalues[k] -
                 np.conj(current)
             ) < 1e-8:
-                k += 1'''
+                k += 1
     Lambda_k = np.zeros(
         (n, n),
         dtype=complex
