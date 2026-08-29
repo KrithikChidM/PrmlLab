@@ -1,4 +1,5 @@
 import math
+import matplotlib.pyplot as plt
 
 filename = "noisy_7.txt"
 
@@ -21,7 +22,6 @@ def read_data(filename):
 
     return data
 
-
 def shuffle_data(data, seed=42):
     data = data[:]
 
@@ -32,7 +32,6 @@ def shuffle_data(data, seed=42):
         data[i], data[j] = data[j], data[i]
 
     return data
-
 
 def split_data(data):
     data = shuffle_data(data)
@@ -47,7 +46,6 @@ def split_data(data):
     validation = data[test_end:]
 
     return train, test, validation
-
 
 def create_matrix(data, degree):
     size = degree + 1
@@ -68,7 +66,6 @@ def create_matrix(data, degree):
             B[i] += y * powers[i]
 
     return A, B
-
 
 def gaussian_elimination(A, B):
     n = len(B)
@@ -111,12 +108,10 @@ def gaussian_elimination(A, B):
 
     return coefficients
 
-
 def train_polynomial(data, degree):
     A, B = create_matrix(data, degree)
 
     return gaussian_elimination(A, B)
-
 
 def predict(x, coefficients):
     result = 0.0
@@ -128,7 +123,6 @@ def predict(x, coefficients):
 
     return result
 
-
 def mse(data, coefficients):
     error = 0.0
 
@@ -137,7 +131,6 @@ def mse(data, coefficients):
         error += (y - prediction) ** 2
 
     return error / len(data)
-
 
 def rmse(data, coefficients):
     return math.sqrt(mse(data, coefficients))
@@ -164,23 +157,16 @@ def r2_score(data, coefficients):
 
     return 1.0 - residual_error / total_error
 
-
 def polynomial_string(coefficients):
     expression = ""
-
     for i, coefficient in enumerate(coefficients):
-
         if i == 0:
             expression = "%.6f" % coefficient
-
         elif coefficient >= 0:
             expression += " + %.6f*x^%d" % (coefficient, i)
-
         else:
             expression += " - %.6f*x^%d" % (abs(coefficient), i)
-
     return expression
-
 
 data = read_data(filename)
 
@@ -260,3 +246,52 @@ else:
     print("Validation MSE  :", validation_mse)
     print("Validation RMSE :", validation_rmse)
     print("Validation R2   :", validation_r2)
+
+x_values = [x for x, y in data]
+y_values = [y for x, y in data]
+
+x_min = min(x_values)
+x_max = max(x_values)
+
+curve_x = []
+curve_y = []
+
+steps = 500
+
+for i in range(steps + 1):
+    x = x_min + (x_max - x_min) * i / steps
+    curve_x.append(x)
+    curve_y.append(predict(x, best_coefficients))
+
+plt.figure(figsize=(10, 6))
+
+plt.scatter(
+    [x for x, y in train],
+    [y for x, y in train],
+    label="Training Data"
+)
+
+plt.scatter(
+    [x for x, y in test],
+    [y for x, y in test],
+    label="Test Data"
+)
+
+plt.scatter(
+    [x for x, y in validation],
+    [y for x, y in validation],
+    label="Validation Data"
+)
+
+plt.plot(
+    curve_x,
+    curve_y,
+    label="Polynomial Degree " + str(best_degree)
+)
+
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title("Polynomial Regression - Noisy Dataset")
+plt.legend()
+plt.grid(True)
+plt.show()
