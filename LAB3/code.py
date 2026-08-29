@@ -1,6 +1,6 @@
 import math
 
-filename = "/content/drive/MyDrive/Krithik SNU/HAM/noisy_7.txt"
+filename = "noisy_7.txt"
 
 def read_data(filename):
     data = []
